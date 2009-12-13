@@ -4,9 +4,9 @@ Which means you can send the response in chunks while allowing Thin to process o
 
 Crazy delicious with em-http-request for file upload, image processing, proxying, etc.
 
-WARNING: You should not use long blocking operations (Net::HTTP or slow shell calls)
-         with this as it will prevent the EventMachine event loop from running and
-         block all other requests.
+## _WARNING_
+You should not use long blocking operations (Net::HTTP or slow shell calls) with this as it
+will prevent the EventMachine event loop from running and block all other requests.
 
 ## Usage
 Inside your Rack app #call(env):
