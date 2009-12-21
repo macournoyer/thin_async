@@ -68,6 +68,7 @@ module Thin
     
     # Tell Thin the response is complete and the connection can be closed.
     def done
+      send_headers
       EM.next_tick { @body.succeed }
     end
     
