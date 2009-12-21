@@ -41,11 +41,12 @@ module Thin
     attr_reader :headers
     attr_accessor :status
     
-    def initialize(env)
+    def initialize(env, status=200, headers={})
       @callback = env['async.callback']
       @body = DeferrableBody.new
-      @status = 200
-      @headers = {}
+      @status = status
+      @headers = headers
+      @headers_sent = false
       
       if block_given?
         yield self
@@ -53,19 +54,26 @@ module Thin
       end
     end
     
+    def send_headers
+      return if @headers_sent
+      @callback.call [@status, @headers, @body]
+      @headers_sent = true
+    end
+    
     def write(body)
+      send_headers
       @body.call(body.respond_to?(:each) ? body : [body])
     end
     alias :<< :write
     
+    # Tell Thin the response is complete and the connection can be closed.
     def done
-      EM.next_tick do
-        @body.succeed
-      end
+      EM.next_tick { @body.succeed }
     end
     
+    # Tell Thin the response is gonna be sent asynchronously.
+    # The status code of -1 is the magic trick here.
     def finish
-      @callback.call [@status, @headers, @body]
       Marker
     end
   end
