@@ -38,7 +38,7 @@ module Thin
     
     Marker = [-1, {}, []].freeze
     
-    attr_reader :headers
+    attr_reader :headers, :callback
     attr_accessor :status
     
     def initialize(env, status=200, headers={})
