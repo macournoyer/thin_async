@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "thin_async"
-  s.version = "0.0.1"
+  s.version = "0.1.0"
   s.summary = "A nice wrapper to send response body asynchronously with Thin"
  
   s.author = "Marc-Andre Cournoyer"
