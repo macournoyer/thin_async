@@ -11,19 +11,18 @@ will prevent the EventMachine event loop from running and block all other reques
 ## Usage
 Inside your Rack app #call(env):
 
-    response = Thin::AsyncResponse.new(env)
-    response.status = 201
-    response.headers["X-Muffin-Mode"] = "ACTIVATED!"
-    
-    response << "this is ... "
-    
-    EM.add_timer(1) do
-      # This will be sent to the client 1 sec later without blocking other requests.
-      response << "async!"
-      response.done
+    Thin::AsyncResponse.perform(env) do |response|
+      response.status = 201
+      response.headers["X-Muffin-Mode"] = "ACTIVATED!"
+
+      response << "this is ... "
+
+      EM.add_timer(1) do
+        # This will be sent to the client 1 sec later without blocking other requests.
+        response << "async!"
+        response.done
+      end
     end
-    
-    response.finish
 
 See example/ dir for more.
 
