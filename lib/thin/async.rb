@@ -41,6 +41,12 @@ module Thin
     attr_reader :headers, :callback
     attr_accessor :status
 
+    # Creates a instance and yields it to the block given
+    # returns the async marker
+    def self.perform(*args, &block)
+      new(*args, &block).finish
+    end
+
     def initialize(env, status=200, headers={})
       @callback = env['async.callback']
       @body = DeferrableBody.new
@@ -51,7 +57,6 @@ module Thin
 
       if block_given?
         yield self
-        finish
       end
     end
 
