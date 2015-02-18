@@ -49,6 +49,7 @@ module Thin
 
     def initialize(env, status=200, headers={})
       @callback = env['async.callback']
+      @close = env['async.close']
       @body = DeferrableBody.new
       @status = status
       @headers = headers
@@ -83,6 +84,24 @@ module Thin
     # Tells if the response has already been completed
     def done?
       @done
+    end
+
+    # Specify a block to be executed when the response is done
+    #
+    # Calling this method before the response has completed will cause the
+    # callback block to be stored on an internal list.
+    # If you call this method after the response is done, the block will
+    # be executed immediately.
+    #
+    def callback &block
+      @close.callback(&block)
+      self
+    end
+
+    # Cancels an outstanding callback to &block if any. Undoes the action of #callback.
+    #
+    def cancel_callback block
+      @close.cancel_callback(block)
     end
 
     # Tell Thin the response is gonna be sent asynchronously.
